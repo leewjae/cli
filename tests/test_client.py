@@ -119,6 +119,7 @@ class TestSearch:
         await client.search("revenue", filter_='category in ["JOB"]', max_results=20)
 
         assert captured["body"] == {
+            "queries": ["revenue"],
             "query": "revenue",
             "filter": 'category in ["JOB"]',
             "maxResults": 20,
@@ -139,9 +140,26 @@ class TestSearch:
         await client.search("revenue", next_page_token="token-123")
 
         assert captured["body"] == {
+            "queries": ["revenue"],
             "query": "revenue",
             "pageToken": "token-123",
         }
+
+    @pytest.mark.asyncio
+    async def test_search_sends_queries_list_and_legacy_query(self, client: DremioClient) -> None:
+        captured: dict = {}
+
+        async def _capture(request: httpx.Request) -> httpx.Response:
+            import json
+
+            captured["body"] = json.loads(request.content)
+            return httpx.Response(200, json={"results": []})
+
+        client._client = httpx.AsyncClient(transport=httpx.MockTransport(_capture))
+
+        await client.search("")
+
+        assert captured["body"] == {"queries": [""], "query": ""}
 
 
 class TestSQLBreadcrumb:
