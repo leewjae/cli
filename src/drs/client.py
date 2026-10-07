@@ -276,9 +276,7 @@ class DremioClient:
         max_results: int | None = None,
         next_page_token: str | None = None,
     ) -> dict:
-        # Newer Dremio reads `queries`; older versions read only `query`. Both ignore unknown fields.
-        legacy_query = next((q for q in queries if q.strip()), "")
-        body: dict[str, Any] = {"queries": queries, "query": legacy_query}
+        body: dict[str, Any] = {"queries": queries}
         if filter_:
             body["filter"] = filter_
         if max_results is not None:

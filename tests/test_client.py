@@ -120,7 +120,6 @@ class TestSearch:
 
         assert captured["body"] == {
             "queries": ["revenue"],
-            "query": "revenue",
             "filter": 'category in ["JOB"]',
             "maxResults": 20,
         }
@@ -141,17 +140,16 @@ class TestSearch:
 
         assert captured["body"] == {
             "queries": ["revenue"],
-            "query": "revenue",
             "pageToken": "token-123",
         }
 
     @pytest.mark.parametrize(
         ("queries", "expected_body"),
         [
-            (["revenue"], {"queries": ["revenue"], "query": "revenue"}),
-            (["revenue", "sales"], {"queries": ["revenue", "sales"], "query": "revenue"}),
-            (["  ", "sales"], {"queries": ["  ", "sales"], "query": "sales"}),
-            ([""], {"queries": [""], "query": ""}),
+            (["revenue"], {"queries": ["revenue"]}),
+            (["revenue", "sales"], {"queries": ["revenue", "sales"]}),
+            (["  ", "sales"], {"queries": ["  ", "sales"]}),
+            ([""], {"queries": [""]}),
         ],
     )
     @pytest.mark.asyncio
